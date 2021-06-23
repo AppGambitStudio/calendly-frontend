@@ -1,0 +1,11 @@
+{
+  "auth": {
+    "calendlyfrontend1be281d3": {
+      "service": "Cognito",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}

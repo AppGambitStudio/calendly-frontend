@@ -1,0 +1,25 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-calendlyfrontend-dev-111739-authRole",
+      "UnauthRoleArn": "arn:aws:iam::609906240783:role/amplify-calendlyfrontend-dev-111739-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::609906240783:role/amplify-calendlyfrontend-dev-111739-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-calendlyfrontend-dev-111739-deployment",
+      "UnauthRoleName": "amplify-calendlyfrontend-dev-111739-unauthRole",
+      "StackName": "amplify-calendlyfrontend-dev-111739",
+      "StackId": "arn:aws:cloudformation:us-east-1:609906240783:stack/amplify-calendlyfrontend-dev-111739/b64a3e10-cff8-11eb-b27d-0af19c0e1949",
+      "AmplifyAppId": "d14z2lvuu309m4"
+    },
+    "categories": {
+      "auth": {
+        "calendlyfrontend1be281d3": {
+          "userPoolId": "us-east-1_1QmQNWNcM",
+          "userPoolName": "CognitoUserPool-UyfaiM0oW5Je",
+          "webClientId": "6udqaedbp2ijhm2vdr1082c225",
+          "nativeClientId": "6udqaedbp2ijhm2vdr1082c225"
+        }
+      }
+    }
+  }
+}
