@@ -4,7 +4,7 @@
             <p class="panel-heading">
                 Saved Events
             </p>            
-            <div class="panel-block" v-if="!loading">
+            <div class="panel-block" v-if="!loading && events.length > 0">
                 <div v-for="event in events" v-bind:key="event.id">
                     <div><router-link :to="{ path: '/', query: { user: 'dhaval-nagar', event: event.shortName }}" >{{ event.shortName }}</router-link> / {{ event.eventName }}</div>                    
                     <div>Duration: {{ event.duration }} Min</div>
@@ -13,8 +13,11 @@
                     </span>
                 </div>
             </div>
+            <div class="panel-block" v-if="!loading && events.length <= 0">
+                No Events Created
+            </div>
             <div class="panel-block" v-if="loading">
-                loading events...
+                loading events...                
             </div>
         </nav>            
     </div>    

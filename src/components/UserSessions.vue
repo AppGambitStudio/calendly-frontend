@@ -4,7 +4,7 @@
             <p class="panel-heading">
                 Sessions
             </p>            
-            <div class="panel-block" v-if="!loading">                
+            <div class="panel-block" >
                 <div class="block">
                 <div class="select">
                     <select v-model="currentYear" v-on:change="yearChanged($event)">
@@ -19,13 +19,16 @@
                 </div>
             </div>
             <div class="panel-block" v-if="!loading">                
-                <div class="block">
+                <div class="block" v-if="sessions.length > 0">
                     <div v-for="session in sessions" v-bind:key="session.id">
                         <div><strong>{{ session.contactName }}</strong></div>
                         <div>{{ session.contactEmail }}</div>
                         <div>{{ session.sessionTime | moment }} for {{ session.duration }} Minutes ({{ session.userTimezone }})</div>                        
                     </div>
-                </div>                    
+                </div>    
+                <div class="block" v-if="sessions.length <= 0">
+                    No Sessions Available
+                </div>
             </div>
             <div class="panel-block" v-if="loading">
                 loading sessions...
@@ -51,7 +54,7 @@ const data = {
     months: [
         {num:'01',value: 'Jan'},
         {num:'02',value: 'Feb'},
-        {num:'04',value: 'Mar'},
+        {num:'03',value: 'Mar'},
         {num:'04',value: 'Apr'},
         {num:'05',value: 'May'},
         {num:'06',value: 'Jun'},
@@ -69,6 +72,7 @@ function loadMonthSessions(){
     const endDate = moment(startDate).endOf('month').format('YYYY-MM-DD');
 
     data.sessions = [];
+    data.loading = true;
     getMySessions(startDate, endDate)
     .then(sessions => { 
         data.loading = false;           

@@ -64,7 +64,7 @@ const data = {
     hasLink: false,
     hasSchedule: false,
     email: '', link: '', schedule: {},
-    host: window.location.href,
+    host: window.location.href.split("#")[0],
     loading: false    
 };
 export default {

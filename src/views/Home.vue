@@ -10,6 +10,12 @@
                 </div>
             </div>
 
+            <div class="block" v-if="!loading && !userFound">
+                <div class="notification is-danger">
+                    <strong>No User Found</strong>
+                </div>
+            </div>
+
             <div class="block" v-if="userFound">
                 <div class="block" v-if="user">
                     <section class="hero">
@@ -108,8 +114,8 @@
 
             <div class="block" v-if="login">
                 <UserProfile />           
-                <UserEvents v-if="hasLink" />
-                <UserSessions v-if="hasLink" />
+                <UserEvents />
+                <UserSessions />
             </div>
             
             <div class="columns" style="padding-top: 50px;" v-if="!login" >
@@ -179,7 +185,11 @@
         contactDate: '',
         contactTime: '',
         user: {},
-        currentSchedule: []
+        currentSchedule: [],
+
+        hasLink: false,
+        loading: false,
+        userFound: false
     };    
 
     import { getUserInfo, getUserSchedule, bookSession } from '../api';
@@ -210,17 +220,28 @@
                     state.user = queryParams.user
                     state.event = queryParams.event
 
+                    state.userFound = false;
+                    state.loading = true;
                     getUserInfo(state.user)
                     .then(userInfo => {
-                        state.userFound = true;
-                        state.user = userInfo;
-                        state.contactName = "";
-                        state.contactEmail = "";
-                        getUserSchedule(userInfo.id, moment().format('YYYY'), moment().format('M'))
-                        .then(schedule => {
-                            console.log(schedule)
-                            state.currentSchedule = schedule;
-                        })
+                        
+                        if(userInfo && userInfo.id){
+                            
+                            state.userFound = true;                            
+                            state.user = userInfo;
+                            state.contactName = "";
+                            state.contactEmail = "";
+                            state.hasLink = userInfo.hasLink;
+                            getUserSchedule(userInfo.id, moment().format('YYYY'), moment().format('M'))
+                            .then(schedule => {
+                                state.loading = false;
+                                console.log(schedule)
+                                state.currentSchedule = schedule;
+                            })
+                        }else{
+                            state.userFound = false;
+                            state.loading = false;
+                        }                   
                     })                
                 }else{
                     state.showUserEvent = false;
