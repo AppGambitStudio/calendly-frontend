@@ -1,6 +1,70 @@
-<template>
-    <section class="">
-        <div class="container">
+<template>    
+    <section class="" >
+        <div class="container" v-if="showUserEvent">
+
+            <div class="columns">
+                <div class="column is-full">
+                    <div class="notification is-info">
+                        This is a <strong>demo</strong> <em>application</em> built to showcase the amazing AWS Serverless services. For the original <code>Calendly</code> go <a href="https://calendly.com" target="_blank">here</a>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="block" v-if="userFound">
+                <div class="block" v-if="user">
+                    <section class="hero">
+                        <div class="hero-body">
+                            <p class="title">
+                            {{ user.email }}
+                            </p>
+                            <p class="subtitle">
+                            Please book your session.
+                            </p>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="hero-body columns">
+                    <div class="column">
+                        <div class="block">
+                            <strong>Book Your Session</strong>
+                            <div class="block">
+                                <div class="field">
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="Your name" v-model="contactName">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="control">
+                                        <input class="input" type="email" placeholder="Email" v-model="contactEmail">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Session Date/Time</label>
+                                    <div class="control">
+                                        <input class="input" type="date" v-model="contactDate">
+                                        <input class="input" type="time" v-model="contactTime">
+                                    </div>
+                                </div>
+                                <div class="control">
+                                    <button class="button is-link" v-on:click="callBookSession">Book</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="block">
+                            <strong>Blocked Timeslots</strong>
+                            <div v-for="schedule in currentSchedule" v-bind:key="schedule.sessionTime">
+                                {{ schedule.sessionTime | moment }} for {{ schedule.duration}} Minutes
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+
+        <div class="container" v-if="!showUserEvent">
             <nav class="navbar" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <div class="navbar-item" href="https://bulma.io" style="font-size: 2rem;">
@@ -42,17 +106,12 @@
                 </div>
             </div>
 
-            <div class="block" v-if="login && isPrivate">
+            <div class="block" v-if="login">
                 <UserProfile />           
-                <UserEvents />
-                <UserSessions />
+                <UserEvents v-if="hasLink" />
+                <UserSessions v-if="hasLink" />
             </div>
             
-            <div class="block" v-if="!isPrivate">
-                Loading User Info and Event Booking UI 
-                <strong>{{ user }}/{{ event }}</strong>
-            </div>
-
             <div class="columns" style="padding-top: 50px;" v-if="!login" >
                 <div class="column is-half">
                     <div class="block" style="">
@@ -107,19 +166,36 @@
     import UserLink from '../components/UserLink.vue'
     import UserEvents from '../components/UserEvents.vue'
     import UserSessions from '../components/UserSessions.vue'
+    import moment from 'moment-timezone';
 
     import { Hub, Auth, API } from 'aws-amplify'
     
-    const state = { login: false };    
+    const state = { 
+        login: false, 
+        showUserEvent: false,
+        userFound: false,
+        contactName: '',
+        contactEmail: '',
+        contactDate: '',
+        contactTime: '',
+        user: {},
+        currentSchedule: []
+    };    
 
+    import { getUserInfo, getUserSchedule, bookSession } from '../api';
 
     Auth.currentAuthenticatedUser()
     .then(user => {
-        state.login = true;
-    });    
+        state.login = true;        
+    });
 
     export default {
         name: 'Home',
+        filters: {
+            moment: function (date) {
+                return moment(date).format('YYYY/MM/DD, h:mm:ss a');
+            }
+        },
         components: {
             UserLink,
             UserProfile,
@@ -127,17 +203,46 @@
             UserSessions
         },
         data() {
-            const queryParams = this.$route.query;
-            if(queryParams.user && queryParams.event){
-                state.isPrivate = false;
-                state.user = queryParams.user
-                state.event = queryParams.event
-            }else{
-                state.isPrivate = true;
-            }
+            this.$nextTick( function() {
+                const queryParams = this.$route.query;
+                if(queryParams.user && queryParams.event){
+                    state.showUserEvent = true;
+                    state.user = queryParams.user
+                    state.event = queryParams.event
+
+                    getUserInfo(state.user)
+                    .then(userInfo => {
+                        state.userFound = true;
+                        state.user = userInfo;
+                        state.contactName = "";
+                        state.contactEmail = "";
+                        getUserSchedule(userInfo.id, moment().format('YYYY'), moment().format('M'))
+                        .then(schedule => {
+                            console.log(schedule)
+                            state.currentSchedule = schedule;
+                        })
+                    })                
+                }else{
+                    state.showUserEvent = false;
+                }
+            });            
             return state
         },
         methods: {
+            callBookSession() {
+                console.log(this.$data.contactDate);
+                console.log(this.$data.contactTime);
+                const contactDateTime = moment(this.$data.contactDate + " " + this.$data.contactTime).format();
+                
+                bookSession({
+                    "id": `${this.$data.user.id}`,
+                    "name": `${this.$data.contactName}`,
+                    "email": `${this.$data.contactEmail}`,
+                    "sessionTime": contactDateTime,
+                    "duration": 30,
+                    "timezone": moment.tz.guess()
+                }).then(res => console.log(res));
+            },
             doSignup() {
                 Auth.federatedSignIn();
             },

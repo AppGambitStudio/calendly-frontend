@@ -4,15 +4,17 @@
             <h1 class="title">Welcome, {{ email }}</h1>
         </div>
         <div class="block">
-            Share your link - 
-            <span class="tag is-link">
-                https://mycalendly.com/{{ link }}
+            <span class="tag is-link" v-if="hasLink">
+                {{ host }}{{ link }}
+            </span>
+            <span class="notification is-danger" v-if="!hasLink">
+                <strong>You haven't saved your profile link yet.</strong>
             </span>
         </div>
-        <div class="block">
-            Start Time {{ schedule.startHour }} End Time {{ schedule.endHour }}
+        <div class="block" v-if="hasSchedule">
+            Working Hours - {{ schedule.startHour }}:00 - {{ schedule.endHour }}:00
         </div>
-        <div class="block">
+        <div class="block" v-if="hasSchedule">
             <div class="field has-addons">
                 <p class="control" >
                     <button class="button" v-bind:class="{ 'is-primary': schedule.mon }">
@@ -55,18 +57,29 @@
 </template>
 
 <script>
+import moment from 'moment';
 import { getMyProfile } from '../api';
 
 const data = { 
+    hasLink: false,
+    hasSchedule: false,
     email: '', link: '', schedule: {},
-    loading: false
+    host: window.location.href,
+    loading: false    
 };
 export default {
     name: 'UserProfile',
+    filters: {
+        ampm: function(val) {
+            
+        }
+    },
     data() {
         data.loading = true;
         getMyProfile()
         .then(profile => {
+            data.hasLink = profile.hasLink
+            data.hasSchedule = profile.hasSchedule
             data.email = profile.email;
             data.link = profile.link;
             data.schedule = profile.schedule;

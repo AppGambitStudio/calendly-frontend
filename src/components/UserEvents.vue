@@ -2,13 +2,15 @@
     <div class="content">
         <nav class="panel">
             <p class="panel-heading">
-                Events
+                Saved Events
             </p>            
             <div class="panel-block" v-if="!loading">
                 <div v-for="event in events" v-bind:key="event.id">
-                    <div>{{ event.shortName }}</div>
-                    <div>{{ event.eventName }}</div>
-                    <div>Duration {{ event.duration }} Min</div>
+                    <div><router-link :to="{ path: '/', query: { user: 'dhaval-nagar', event: event.shortName }}" >{{ event.shortName }}</router-link> / {{ event.eventName }}</div>                    
+                    <div>Duration: {{ event.duration }} Min</div>
+                    Share <span class="tag is-primary">
+                        <router-link :to="{ path: '/', query: { user: 'dhaval-nagar', event: event.shortName }}" >{{ event.shortName }}</router-link>
+                    </span>
                 </div>
             </div>
             <div class="panel-block" v-if="loading">

@@ -9,10 +9,13 @@
   ],
   "dependencies": {
     "aws-amplify": "latest",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "css-loader": "^5.2.6",
     "file-loader": "^6.2.0",
     "graphql-tag": "^2.12.4",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
     "style-loader": "^2.0.0",
     "url-loader": "^4.1.1",
     "vue": "^2.6.12",

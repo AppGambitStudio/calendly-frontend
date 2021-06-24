@@ -15,6 +15,17 @@ const myAppConfig = {
   
 Amplify.configure(myAppConfig);
 
+Amplify.configure({
+    API: {
+        endpoints: [
+            {
+                name: "CalendlyPublicAPI",
+                endpoint: "https://xwo89o6i54.execute-api.us-east-1.amazonaws.com/dev"
+            }
+        ]
+    }
+});
+
 // const appData = {
 //     login: false,
 //     init: true,

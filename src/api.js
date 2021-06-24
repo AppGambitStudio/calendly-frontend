@@ -1,5 +1,6 @@
 import { API } from 'aws-amplify';
 import gql from 'graphql-tag'
+import axios from 'axios';
 
 export const getMyProfile = async () => {
     const result = await API.graphql({
@@ -132,4 +133,20 @@ export const setUniqueLink = async (link) => {
       authMode: "AMAZON_COGNITO_USER_POOLS"
     })
     return result;
+}
+
+export const getUserInfo = async (link) => {
+  return await API
+  .get('CalendlyPublicAPI', `/user-info?linkName=${link}`, {});
+}
+
+export const getUserSchedule = async (id, year, month) => {
+  return await API
+  .get('CalendlyPublicAPI', `/user-schedule?id=${id}&year=${year}&month=${month}`, {});
+}
+
+export const bookSession = async (session) => {
+  return await API.post('CalendlyPublicAPI', '/user-session', {
+    body: session
+  })
 }
