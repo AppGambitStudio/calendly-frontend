@@ -1,5 +1,4 @@
 import Amplify from 'aws-amplify'
-import config from './aws-exports'
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router';
@@ -7,10 +6,11 @@ import router from './router';
 // Cognito Configuration
 const region = 'us-east-1';
 const cognitoDomainName = 'calendly-app-dev'
-const cognitoWebClientId = '3cphtg41opguo8k9tlngh7rere';
-const cognitoPoolId = "us-east-1_1QmQNWNcM";
-const graphQlEndpoint = 'https://yxjzvkixbbarpjf33tojpu3hiq.appsync-api.us-east-1.amazonaws.com/graphql';
-const apiGatewayEndpoint = "https://9z92rh38j9.execute-api.us-east-1.amazonaws.com/dev";
+const cognitoWebClientId = '4a8m7vp5blh1oioleuq4k16uoj';
+const cognitoPoolId = "us-east-1_5BAT5PdqF";
+const cloudfrontUrl = "https://d2a2u5lg9yzpdp.cloudfront.net";
+const graphQlEndpoint = 'https://6boiwtrd2ba3dpkofo5zfsf7p4.appsync-api.us-east-1.amazonaws.com/graphql';
+const apiGatewayEndpoint = "https://duk3flydp6.execute-api.us-east-1.amazonaws.com/dev";
 
 const cognito = {
     "aws_project_region": region,
@@ -24,8 +24,8 @@ const cognito = {
             "openid",
             "profile"
         ],
-        "redirectSignIn": "http://localhost:8080",
-        "redirectSignOut": "http://localhost:8080",
+        "redirectSignIn": cloudfrontUrl,
+        "redirectSignOut": cloudfrontUrl,
         "responseType": "token"
     },
     "federationTarget": "COGNITO_USER_POOLS"    

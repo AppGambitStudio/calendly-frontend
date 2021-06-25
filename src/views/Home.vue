@@ -56,6 +56,14 @@
                                     <button class="button is-link" v-on:click="callBookSession">Book</button>
                                 </div>
                             </div>
+                            <div class="block" v-if="showBooking">
+                                <div class="block notification is-primary" v-if="bookingDone">
+                                    Your session is booked.
+                                </div>
+                                <div class="block notification is-danger" v-if="!bookingDone">
+                                    Failed to book the session. Please check for the Booked Timeslots. 
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="column">
@@ -189,7 +197,11 @@
 
         hasLink: false,
         loading: false,
-        userFound: false
+        userFound: false,
+
+        showBooking: false,
+        bookingDone: false,
+        bookingError: ''
     };    
 
     import { getUserInfo, getUserSchedule, bookSession } from '../api';
@@ -262,7 +274,15 @@
                     "sessionTime": contactDateTime,
                     "duration": 30,
                     "timezone": moment.tz.guess()
-                }).then(res => console.log(res));
+                }).then(res => {
+                    this.$data.showBooking = true;
+                    this.$data.bookingDone = true;
+                }).catch(err => {
+                    console.log(err);
+                    this.$data.showBooking = true;
+                    this.$data.bookingDone = false;
+                    this.$data.bookingError = err.message;
+                });
             },
             doSignup() {
                 Auth.federatedSignIn();

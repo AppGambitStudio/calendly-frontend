@@ -35,6 +35,8 @@
   },
   "scripts": {
     "start": "webpack && webpack-dev-server --mode development",
-    "build": "webpack"
+    "build": "webpack",
+    "s3-sync": "aws s3 sync dist/ ",
+    "s3-clean": "aws s3 rm --recursive "
   }
 }
